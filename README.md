@@ -12,12 +12,16 @@ Over the course of this lesson, you will learn several aspects of robotic softwa
 
 Tasks: Where Am I Project
 
-- [ ] Set up simulation: environment and robot
-- [ ] Generate ground truth map from your Gazebo world
-- [ ] Build your AMCL launch file
-- [ ] Select proper localization parameters
-- [ ] Add teleop node
-- [ ] Put it all together
+- [x] Set up simulation: environment and robot
+- [x] Generate ground truth map from your Gazebo world
+- [x] Build your AMCL launch file
+- [x] Select proper localization parameters
+- [x] Add teleop node
+- [x] Put it all together
+- [x] add simple wall detection
+
+  
+[![Demo](screen.gif)]
 
 
 
