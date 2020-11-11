@@ -1,26 +1,23 @@
-cmake_minimum_required(VERSION 2.8.8)
-project(pgm_map_creator)
+cmake_minimum_required(VERSION 3.0.2)
+project(wall_chaser)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
-set(CMAKE_CXX_FLAGS "-g -Wall -std=c++11")
-
-include(FindPkgConfig)
-if (PKG_CONFIG_FOUND)
-    pkg_check_modules(GAZEBO gazebo)
-    pkg_check_modules(SDF sdformat)
-endif ()
+add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-        roscpp
-        rospy
-        )
+  message_generation
+  roscpp
+  std_msgs
+  tf
+  sensor_msgs
+  laser_geometry
+)
 
 ## System dependencies are found with CMake's conventions
-find_package(Boost REQUIRED COMPONENTS system)
+# find_package(Boost REQUIRED COMPONENTS system)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -60,11 +57,10 @@ find_package(Boost REQUIRED COMPONENTS system)
 # )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+add_service_files(
+    FILES
+    DriveToTarget.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -74,10 +70,10 @@ find_package(Boost REQUIRED COMPONENTS system)
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+generate_messages(
+   DEPENDENCIES
+   std_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -109,10 +105,10 @@ find_package(Boost REQUIRED COMPONENTS system)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-        #  INCLUDE_DIRS include
-        #  LIBRARIES pgm_map_creator
-        #  CATKIN_DEPENDS roscpp rospy
-        #  DEPENDS system_lib
+#  INCLUDE_DIRS include
+#  LIBRARIES wall_chaser
+#  CATKIN_DEPENDS message_generation roscpp std_msgs
+#  DEPENDS system_lib
 )
 
 ###########
@@ -121,18 +117,10 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(
-        # include
-        ${catkin_INCLUDE_DIRS}
-
-        ${GAZEBO_INCLUDE_DIRS}
-        ${SDF_INCLUDE_DIRS}
-        ${CMAKE_CURRENT_BINARY_DIR}/msgs
-)
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/pgm_map_creator.cpp
+#   src/${PROJECT_NAME}/wall_chaser.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -143,7 +131,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/pgm_map_creator_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/wall_chaser_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -160,17 +148,6 @@ include_directories(
 #   ${catkin_LIBRARIES}
 # )
 
-link_directories(${GAZEBO_LIBRARY_DIRS} ${CMAKE_CURRENT_BINARY_DIR}/msgs)
-add_subdirectory(msgs)
-
-add_executable(request_publisher src/request_publisher.cc)
-target_link_libraries(request_publisher collision_map_creator_msgs ${Boost_LIBRARIES} ${GAZEBO_LIBRARIES} ${SDF_LIBRARIES})
-add_dependencies(request_publisher collision_map_creator_msgs)
-
-add_library(collision_map_creator SHARED src/collision_map_creator.cc)
-target_link_libraries(collision_map_creator collision_map_creator_msgs ${Boost_LIBRARIES} ${GAZEBO_LIBRARIES} ${SDF_LIBRARIES})
-add_dependencies(collision_map_creator collision_map_creator_msgs)
-
 #############
 ## Install ##
 #############
@@ -180,16 +157,23 @@ add_dependencies(collision_map_creator collision_map_creator_msgs)
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
-# install(PROGRAMS
+# catkin_install_python(PROGRAMS
 #   scripts/my_python_script
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 
-## Mark executables and/or libraries for installation
-# install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_node
+## Mark executables for installation
+## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
+# install(TARGETS ${PROJECT_NAME}_node
+#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
+
+## Mark libraries for installation
+## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
+# install(TARGETS ${PROJECT_NAME}
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+#   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
 # )
 
 ## Mark cpp header files for installation
@@ -211,10 +195,21 @@ add_dependencies(collision_map_creator collision_map_creator_msgs)
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_pgm_map_creator.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_wall_chaser.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+include_directories(include ${catkin_INCLUDE_DIRS})
+find_package(Eigen3 REQUIRED)
+include_directories(${EIGEN3_INCLUDE_DIR})
+
+add_executable(drive_bot src/drive_bot.cpp)
+target_link_libraries(drive_bot ${catkin_LIBRARIES})
+add_dependencies(drive_bot ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+add_executable(wall_chaser src/SimpleWallChaser.cpp)
+target_link_libraries(wall_chaser ${catkin_LIBRARIES})
+add_dependencies(wall_chaser ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
