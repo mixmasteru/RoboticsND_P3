@@ -21,7 +21,7 @@ Tasks: Where Am I Project
 - [x] add simple wall detection
 
   
-[![Demo](screen.gif)]
+![Demo](screen.gif)
 
 
 
