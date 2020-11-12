@@ -111,7 +111,7 @@ Visualization Manager:
       Axes Length: 0.300000012
       Axes Radius: 0.00999999978
       Class: rviz/PoseArray
-      Color: 255; 25; 0
+      Color: 0; 170; 0
       Enabled: true
       Head Length: 0.0700000003
       Head Radius: 0.0299999993
@@ -147,25 +147,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 9.52246189
+      Distance: 11.7875595
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0
-        Y: 0
-        Z: 0
+        X: 0.867611289
+        Y: 0.558233559
+        Z: -1.94052982
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.875397861
+      Pitch: 0.850397825
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.00539779663
+      Yaw: 6.0735817
     Saved: ~
 Window Geometry:
   Displays:
@@ -183,5 +183,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1200
-  X: 395
-  Y: 128
+  X: 43
+  Y: 109
